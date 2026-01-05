@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediScan Result</title>
+</head>
+<body>
+    <h1>MediScan AI – Result</h1>
+
+    <p><b>Selected organ:</b> {{ organ }}</p>
+    <p><b>Uploaded file name:</b> {{ filename }}</p>
+
+    <hr>
+
+    <h3>AI Analysis (Dummy)</h3>
+    <p><b>Diagnosis:</b> {{ diagnosis }}</p>
+    <p><b>Confidence:</b> {{ confidence }}%</p>
+
+    <p style="color: gray; font-size: 14px;">
+        *This is a dummy prediction for testing the app flow. 
+        In the next step we will connect a real deep learning model.
+    </p>
+
+    <br>
+    <a href="{{ url_for('index') }}">⬅ Back to Home</a>
+</body>
+</html>
+

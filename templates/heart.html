@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MediScan AI – Heart Disease Detection</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg: radial-gradient(circle at top left,#021712 0,#02040a 40%,#000 100%);
+  --card: linear-gradient(135deg,#02050c,#020b12);
+  --border: rgba(148,163,184,.28);
+  --green:#00ff84;
+  --muted:#9ca3af;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:#f5f5f5;
+}
+
+/* ================= NAVBAR ================= */
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  backdrop-filter:blur(16px);
+  background:linear-gradient(to bottom,rgba(2,4,10,.95),transparent);
+  border-bottom:1px solid rgba(148,163,184,.16);
+}
+header div{
+  max-width:1200px;
+  margin:auto;
+  padding:1rem 1.5rem;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  font-weight:700;
+}
+
+/* ================= HERO ================= */
+.hero{
+  padding:5rem 1.5rem 4rem;
+  text-align:center;
+}
+.hero h1{
+  font-size:clamp(2.4rem,4vw,3.1rem);
+  margin:.6rem 0;
+}
+.hero p{
+  max-width:42rem;
+  margin:auto;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+/* ================= FORM CARD ================= */
+.form-wrap{
+  max-width:920px;
+  margin:auto;
+  padding:0 1.5rem 5rem;
+}
+
+form{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:1.8rem;
+  padding:2.8rem;
+  box-shadow:0 24px 60px rgba(0,0,0,.75);
+}
+
+h2{
+  margin:1.6rem 0 1.4rem;
+  font-size:1.4rem;
+}
+
+/* ================= GRID ================= */
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2rem;
+  margin-bottom:2rem;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+}
+
+/* ================= INPUTS ================= */
+input,select{
+  background:#020812;
+  border:1px solid rgba(148,163,184,.35);
+  border-radius:.9rem;
+  padding:1.05rem 1.1rem;
+  font-size:.95rem;
+  color:#fff;
+}
+
+input::placeholder{color:#8b95a5}
+
+small{
+  margin-top:.45rem;
+  font-size:.8rem;
+  color:var(--muted);
+}
+
+/* ================= BUTTON ================= */
+button{
+  margin-top:2.4rem;
+  padding:1.1rem 2.4rem;
+  border-radius:999px;
+  border:none;
+  font-weight:700;
+  font-size:.95rem;
+  background:linear-gradient(135deg,#00ff84,#13e68a);
+  color:#02110b;
+  cursor:pointer;
+}
+
+/* ================= MOBILE ================= */
+@media(max-width:768px){
+  .grid-2{grid-template-columns:1fr}
+  form{padding:2rem}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <span style="width:36px;height:36px;border-radius:12px;background:radial-gradient(circle at 0 0,#00ff84,#027a52);display:grid;place-items:center;color:#02040a;font-weight:900;">M</span>
+    MediScan<span style="color:#00ff84;">AI</span>
+  </div>
+</header>
+
+<section class="hero">
+  <p style="letter-spacing:.18em;font-size:.75rem;color:#00ff84;text-transform:uppercase;">Heart Module</p>
+  <h1>Heart Disease Risk Assessment</h1>
+  <p>Enter patient clinical parameters. MediScan AI evaluates cardiovascular risk using machine learning.</p>
+</section>
+
+<section class="form-wrap">
+<form method="POST" action="/heart/predict">
+
+<h2>Patient Details</h2>
+
+<div class="grid-2">
+  <div class="field">
+    <input name="patient_name" required placeholder="Full Name">
+  </div>
+  <div class="field">
+    <input name="age" type="number" min="18" max="100" required placeholder="Age">
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="field">
+    <select name="gender" required>
+      <option disabled selected>Select Gender</option>
+      <option>Male</option>
+      <option>Female</option>
+    </select>
+  </div>
+  <div class="field">
+    <input name="contact" placeholder="Contact Number">
+  </div>
+</div>
+
+<h2>Clinical Parameters</h2>
+
+<div class="grid-2">
+  <div class="field">
+    <input name="bp" type="number" min="80" max="220" required placeholder="Resting Blood Pressure (mmHg)">
+    <small>Normal: 90–120 mmHg</small>
+  </div>
+  <div class="field">
+    <input name="cholesterol" type="number" min="100" max="400" required placeholder="Cholesterol (mg/dL)">
+    <small>Normal: &lt; 200 mg/dL</small>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="field">
+    <input name="blood_sugar" type="number" min="60" max="350" placeholder="Fasting Blood Sugar (mg/dL)">
+    <small>Normal: 70–100 mg/dL</small>
+  </div>
+  <div class="field">
+    <input name="heart_rate" type="number" min="60" max="220" placeholder="Max Heart Rate (bpm)">
+    <small>Typical: 60–180 bpm</small>
+  </div>
+</div>
+
+<div class="field">
+  <select name="chest_pain" required>
+    <option disabled selected>Chest Pain Type</option>
+    <option>Typical Angina (High Risk)</option>
+    <option>Atypical Angina (Moderate Risk)</option>
+    <option>Non-anginal Pain (Low Risk)</option>
+    <option>Asymptomatic (Silent Risk)</option>
+  </select>
+  <small>Chest pain type is a key cardiovascular indicator</small>
+</div>
+
+<button type="submit">Run Heart Risk Analysis</button>
+
+</form>
+</section>
+
+<footer style="text-align:center;padding:1.5rem;color:#9ca3af;border-top:1px solid rgba(148,163,184,.2);">
+MediScan AI – Heart Disease Module • © 2025
+</footer>
+
+</body>
+</html>

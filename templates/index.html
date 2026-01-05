@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediScan AI – Early Disease Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ================= HOSPITAL THEME CSS ================= */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Hospital Theme Color Palette */
+            --primary-blue: #0066CC;
+            --light-blue: #4A90E2;
+            --pale-blue: #E8F4F8;
+            --medical-green: #00A86B;
+            --dark-bg: #002855;
+            --darker-bg: #001833;
+            --white: #FFFFFF;
+            --light-gray: #F5F7FA;
+            --text-gray: #5A6C7D;
+            --border-color: #D1E3F8;
+            --success-green: #00C851;
+            --accent-teal: #00BFA5;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, var(--pale-blue) 0%, var(--white) 100%);
+            background-attachment: fixed;
+        }
+
+        /* Medical Cross Pattern Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(0, 102, 204, 0.02) 35px, rgba(0, 102, 204, 0.02) 36px),
+                repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(0, 102, 204, 0.02) 35px, rgba(0, 102, 204, 0.02) 36px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .ms-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ================= NAVBAR ================= */
+        .ms-nav {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(232, 244, 248, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 102, 204, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .ms-nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ms-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .ms-logo-mark {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .ms-logo-text span {
+            color: var(--medical-green);
+        }
+
+        .ms-nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .ms-nav-links a {
+            color: var(--dark-bg);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .ms-nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--medical-green);
+            transition: width 0.3s ease;
+        }
+
+        .ms-nav-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        .ms-nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .ms-burger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .ms-burger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-blue);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* ================= BUTTONS ================= */
+        .ms-btn {
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .ms-btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .ms-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 102, 204, 0.4);
+        }
+
+        .ms-btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .ms-btn-outline:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .ms-btn-ghost {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary-blue);
+            border: 2px solid var(--border-color);
+        }
+
+        .ms-btn-ghost:hover {
+            background: white;
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        .ms-btn-small {
+            padding: 8px 20px;
+            font-size: 0.9rem;
+        }
+
+        /* ================= HERO SECTION ================= */
+        .ms-hero {
+            padding: 120px 0 80px;
+            background: linear-gradient(135deg, rgba(232, 244, 248, 0.5) 0%, rgba(255, 255, 255, 0.8) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ms-hero::before {
+            content: '⚕️';
+            position: absolute;
+            font-size: 400px;
+            opacity: 0.03;
+            top: -100px;
+            right: -100px;
+            pointer-events: none;
+        }
+
+        .ms-hero-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .ms-eyebrow {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--pale-blue) 0%, rgba(0, 168, 107, 0.1) 100%);
+            color: var(--primary-blue);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 2px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ms-hero h1 {
+            font-size: 3.5rem;
+            color: var(--dark-bg);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .ms-hero-sub {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 620px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .ms-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 1rem;
+        }
+
+        .ms-hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 1.5rem;
+        }
+
+        .ms-meta-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--medical-green);
+            display: block;
+        }
+
+        .ms-meta-label {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            display: block;
+        }
+
+        /* ================= SECTIONS ================= */
+        .ms-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .ms-section-dark {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ms-section-dark::before {
+            content: '🏥';
+            position: absolute;
+            font-size: 300px;
+            opacity: 0.03;
+            bottom: -50px;
+            left: -50px;
+            pointer-events: none;
+        }
+
+        .ms-section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .ms-section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-bg);
+            font-weight: 800;
+        }
+
+        .ms-section-dark .ms-section-header h2 {
+            color: white;
+        }
+
+        .ms-section-sub {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .ms-section-dark .ms-section-sub {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* ================= SERVICES GRID ================= */
+        .ms-services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .ms-service-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .ms-service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--medical-green);
+            box-shadow: 0 10px 40px rgba(0, 168, 107, 0.2);
+        }
+
+        .ms-service-card h3 {
+            color: white;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .ms-service-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .ms-pill {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--medical-green) 0%, var(--accent-teal) 100%);
+            color: white;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* ================= MODULES GRID ================= */
+        .ms-modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .ms-module-card {
+            background: linear-gradient(135deg, var(--white) 0%, var(--pale-blue) 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.1);
+        }
+
+        .ms-module-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 10px 40px rgba(0, 102, 204, 0.2);
+        }
+
+        .ms-module-card h3 {
+            color: var(--dark-bg);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .ms-module-card p {
+            color: var(--text-gray);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ================= WORKFLOW STEPS ================= */
+        .ms-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .ms-step {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .ms-step:hover {
+            transform: translateY(-5px);
+            border-color: var(--medical-green);
+        }
+
+        .ms-step-number {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--medical-green) 0%, var(--accent-teal) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 168, 107, 0.4);
+        }
+
+        .ms-step h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin: 20px 0 10px;
+            font-weight: 700;
+        }
+
+        .ms-step p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+        }
+
+        /* ================= CONTACT SECTION ================= */
+        .ms-contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .ms-contact-form {
+            background: linear-gradient(135deg, var(--pale-blue) 0%, var(--white) 100%);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 102, 204, 0.1);
+        }
+
+        .ms-contact-form label {
+            display: block;
+            margin-bottom: 1.5rem;
+            color: var(--dark-bg);
+            font-weight: 600;
+        }
+
+        .ms-contact-form input,
+        .ms-contact-form textarea {
+            width: 100%;
+            padding: 12px 16px;
+            margin-top: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .ms-contact-form input:focus,
+        .ms-contact-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .ms-contact-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* ================= FOOTER ================= */
+        .ms-footer {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            color: white;
+            padding: 30px 0;
+            border-top: 3px solid var(--medical-green);
+        }
+
+        .ms-footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .ms-footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .ms-footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .ms-footer-links a:hover {
+            color: var(--medical-green);
+        }
+
+        /* ================= AUTH OVERLAY ================= */
+        #authOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 40, 85, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        #authOverlay > div {
+            width: 100%;
+            max-width: 420px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(232, 244, 248, 0.98) 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 22px;
+            padding: 2rem;
+            box-shadow: 0 30px 80px rgba(0, 102, 204, 0.3);
+            color: var(--dark-bg);
+            animation: authPop 0.4s ease-out;
+        }
+
+        #authOverlay h3 {
+            color: var(--dark-bg);
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        #authOverlay h3 span {
+            color: var(--medical-green);
+        }
+
+        #authOverlay p {
+            color: var(--text-gray);
+            margin: 0.4rem 0 1.4rem;
+        }
+
+        #authOverlay input {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 0.4rem 0 1rem;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--dark-bg);
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        #authOverlay input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        #authOverlay label {
+            display: block;
+            color: var(--dark-bg);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes authPop {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 768px) {
+            .ms-nav-links {
+                display: none;
+            }
+
+            .ms-burger {
+                display: flex;
+            }
+
+            .ms-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .ms-contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ms-hero-meta {
+                gap: 20px;
+            }
+
+            .ms-section-header h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= AUTH CARD ================= -->
+<div id="authOverlay">
+    <div>
+        <!-- HEADER -->
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h3>
+                MediScan<span>AI</span>
+            </h3>
+            <button onclick="closeAuthCard()"
+                    style="
+                        background:none;
+                        border:none;
+                        color:#5A6C7D;
+                        font-size:1.8rem;
+                        cursor:pointer;
+                        font-weight:bold;
+                    ">×</button>
+        </div>
+
+        <p>
+            Secure access to AI diagnosis modules
+        </p>
+
+        <!-- TABS -->
+        <div style="display:flex;gap:8px;margin-bottom:1.2rem;">
+            <button onclick="showLogin()"
+                    id="loginTab"
+                    class="ms-btn ms-btn-small ms-btn-primary">
+                Login
+            </button>
+
+            <button onclick="showSignup()"
+                    id="signupTab"
+                    class="ms-btn ms-btn-small ms-btn-outline">
+                Sign Up
+            </button>
+        </div>
+
+        <!-- LOGIN -->
+        <form id="loginForm">
+            <label>Email
+                <input type="email" placeholder="email@example.com" required>
+            </label>
+
+            <label>Password
+                <input type="password" placeholder="••••••••" required>
+            </label>
+
+            <button type="submit" class="ms-btn ms-btn-primary"
+                    style="width:100%;margin-top:1rem;">
+                Login
+            </button>
+        </form>
+
+        <!-- SIGNUP -->
+        <form id="signupForm" style="display:none;">
+            <label>Name
+                <input type="text" placeholder="Your name" required>
+            </label>
+
+            <label>Email
+                <input type="email" placeholder="email@example.com" required>
+            </label>
+
+            <label>Password
+                <input type="password" placeholder="Create password" required>
+            </label>
+
+            <button type="submit" class="ms-btn ms-btn-primary"
+                    style="width:100%;margin-top:1rem;">
+                Create Account
+            </button>
+        </form>
+    </div>
+</div>
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="ms-nav">
+        <div class="ms-container ms-nav-inner">
+            <div class="ms-logo">
+                <span class="ms-logo-mark">M</span>
+                <span class="ms-logo-text">ediScan<span>AI</span></span>
+            </div>
+
+            <nav class="ms-nav-links">
+                <a href="#hero">Home</a>
+                <a href="#services">Services</a>
+                <a href="#modules">Modules</a>
+                <a href="#workflow">How it works</a>
+                <a href="#contact">Contact</a>
+            </nav>
+
+           <!-- <a href="javascript:void(0)"
+               class="ms-btn ms-btn-outline"
+               onclick="openAuthCard()">
+               Login / Signup
+            </a>--><div></div>
+
+            <!-- mobile menu icon (no JS yet, just visual) -->
+            <div class="ms-burger">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= HERO ================= -->
+    <section id="hero" class="ms-hero">
+        <div class="ms-container ms-hero-inner">
+            <div class="ms-hero-left" style="width:100%;">
+                <p class="ms-eyebrow">Early Disease Detection Platform</p>
+
+                <h1>
+                    AI that Sees<br>
+                    What Eyes Can't.
+                </h1>
+
+                <p class="ms-hero-sub">
+                    MediScan AI turns CT & MRI scans into actionable insights – 
+                    helping doctors detect tumors and anomalies in the brain, lung, liver, kidney and chest within seconds.
+                </p>
+
+                <!-- ACTION BUTTONS -->
+                <div class="ms-hero-actions">
+                    <a href="#modules" class="ms-btn ms-btn-primary">Start Detection</a>
+                    <a href="#modules" class="ms-btn ms-btn-ghost">View All Modules</a>
+                </div>
+
+                <!-- META INFO -->
+                <div class="ms-hero-meta">
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <span class="ms-meta-number">5+</span>
+                        <span class="ms-meta-label">Organs Supported</span>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <span class="ms-meta-number">AI</span>
+                        <span class="ms-meta-label">Heatmaps & Reports</span>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <span class="ms-meta-number">MCA</span>
+                        <span class="ms-meta-label">Capstone Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SERVICES ================= -->
+    <section id="services" class="ms-section ms-section-dark">
+        <div class="ms-container">
+            <div class="ms-section-header">
+                <p class="ms-eyebrow">Our Services</p>
+                <h2>AI-Powered Medical Imaging Assistance</h2>
+                <p class="ms-section-sub">
+                    MediScan AI supports clinicians with fast triage, visual explanations and structured reports –
+                    without replacing medical judgement.
+                </p>
+            </div>
+
+            <div class="ms-services-grid">
+                <article class="ms-service-card">
+                    <h3>Early Brain Tumor Detection</h3>
+                    <p>
+                        Upload brain MRI/CT scans and instantly receive a tumor probability score with severity levels.
+                    </p>
+                    <span class="ms-pill">Powered by Deep CNN</span>
+                </article>
+
+                <article class="ms-service-card">
+                    <h3>Lung & Chest Screening</h3>
+                    <p>
+                        Detect potential infections, nodules or pneumonia from lung and chest scans using pretrained models.
+                    </p>
+                    <span class="ms-pill">CT / X-ray Support</span>
+                </article>
+
+                <article class="ms-service-card">
+                    <h3>Liver & Kidney Anomaly Flagging</h3>
+                    <p>
+                        Highlight suspicious lesions using segmentation-based heatmaps to support radiologist review.
+                    </p>
+                    <span class="ms-pill">Segmentation & Heatmaps</span>
+                </article>
+
+                <article class="ms-service-card">
+                    <h3>Automated PDF Reports</h3>
+                    <p>
+                        Convert AI results, patient details and visual evidence into downloadable PDF reports in one click.
+                    </p>
+                    <span class="ms-pill">Clinician-Friendly Output</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= MODULES ================= -->
+    <section id="modules" class="ms-section">
+        <div class="ms-container">
+            <div class="ms-section-header">
+                <p class="ms-eyebrow">Detection Modules</p>
+                <h2>Choose the Organ You Want to Analyze</h2>
+            </div>
+
+            <div class="ms-modules-grid">
+                <div class="ms-module-card" style="display:flex;flex-direction:column;">
+                    <h3>Brain Tumor</h3>
+                    <p>Detect presence of brain tumor and severity using pretrained CNN models.</p>
+                    <a href="/brain"
+                       class="ms-btn ms-btn-small ms-btn-outline"
+                       style="margin-top:auto;">
+                       Open Brain Module
+                    </a>
+                </div>
+
+                <div class="ms-module-card" style="display:flex;flex-direction:column;">
+                    <h3>Lung Disease</h3>
+                    <p>Classify scans as normal, pneumonia, COVID or suspicious lung patterns.</p>
+                    <a href="/lungs"
+                       class="ms-btn ms-btn-small ms-btn-outline"
+                       style="margin-top:auto;">
+                       Open Lung Module
+                    </a>
+                </div>
+
+                <div class="ms-module-card" style="display:flex;flex-direction:column;">
+                    <h3>Kidney Disease</h3>
+                    <p>Use segmentation masks and heatmaps to highlight potential liver lesions.</p>
+                    <a href="/liver"
+                       class="ms-btn ms-btn-small ms-btn-outline"
+                       style="margin-top:auto;">
+                       Open Liver Module
+                    </a>
+                </div>
+
+                <div class="ms-module-card" style="display:flex;flex-direction:column;">
+                    <h3>Heart Disease</h3>
+                    <p>
+                        Assess cardiovascular disease risk using clinical parameters and 
+                        machine learning–based heart disease prediction models.
+                    </p>
+                    <a href="/heart"
+                       class="ms-btn ms-btn-small ms-btn-outline"
+                       style="margin-top:auto;">
+                       Open Heart Module
+                    </a>
+                </div>
+
+                <!-- ================= COMING SOON MODULES ================= -->
+                <div class="ms-module-card"
+                     style="display:flex;flex-direction:column;opacity:0.6;pointer-events:none;">
+                    <h3>Skin Cancer</h3>
+                    <p>
+                        Automated detection of malignant skin lesions
+                        using dermoscopic images and CNN models.
+                    </p>
+                    <div class="ms-btn ms-btn-small ms-btn-outline"
+                         style="margin-top:auto;cursor:not-allowed;opacity:0.7;">
+                        In Progress
+                    </div>
+                </div>
+
+                <div class="ms-module-card"
+                     style="display:flex;flex-direction:column;opacity:0.6;pointer-events:none;">
+                    <h3>Diabetic Retinopathy</h3>
+                    <p>
+                        AI-based detection of diabetic eye damage using
+                        retinal fundus images and deep learning models.
+                    </p>
+                    <div class="ms-btn ms-btn-small ms-btn-outline"
+                         style="margin-top:auto;cursor:not-allowed;opacity:0.7;">
+                        Coming Soon
+                    </div>
+                </div>
+
+                <div class="ms-module-card"
+                     style="display:flex;flex-direction:column;opacity:0.6;pointer-events:none;">
+                    <h3>Breast Cancer</h3>
+                    <p>
+                        Mammography-based breast cancer detection using
+                        deep learning classification models.
+                    </p>
+                    <div class="ms-btn ms-btn-small ms-btn-outline"
+                         style="margin-top:auto;cursor:not-allowed;opacity:0.7;">
+                        Coming Soon
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= WORKFLOW ================= -->
+    <section id="workflow" class="ms-section ms-section-dark">
+        <div class="ms-container">
+            <div class="ms-section-header">
+                <p class="ms-eyebrow">How It Works</p>
+                <h2>How MediScan AI Works</h2>
+                <p class="ms-section-sub">
+                    MediScan AI follows a structured AI-driven workflow to assist doctors
+                    in early disease detection using medical images.
+                </p>
+            </div>
+
+            <div class="ms-steps-grid">
+                <div class="ms-step">
+                    <span class="ms-step-number">1</span>
+                    <h3>Patient Data & Scan Upload</h3>
+                    <p>
+                        The clinician selects a detection module (Brain, Lung, Liver, Heart)
+                        and uploads the patient's CT, MRI, or X-ray scan along with basic details.
+                    </p>
+                </div>
+
+                <div class="ms-step">
+                    <span class="ms-step-number">2</span>
+                    <h3>AI Model Analysis</h3>
+                    <p>
+                        A trained deep learning model processes the scan to identify
+                        abnormal patterns, lesions, or disease indicators.
+                    </p>
+                </div>
+
+                <div class="ms-step">
+                    <span class="ms-step-number">3</span>
+                    <h3>Confidence Scoring</h3>
+                    <p>
+                        The system calculates a prediction confidence score that represents
+                        the likelihood of disease presence based on model inference.
+                    </p>
+                </div>
+
+                <div class="ms-step">
+                    <span class="ms-step-number">4</span>
+                    <h3>Explainable AI Heatmap</h3>
+                    <p>
+                        A heatmap is generated to visually highlight regions of the scan
+                        that influenced the AI's decision, improving transparency and trust.
+                    </p>
+                </div>
+
+                <div class="ms-step">
+                    <span class="ms-step-number">5</span>
+                    <h3>Clinical Interpretation</h3>
+                    <p>
+                        The AI output is presented as a decision-support tool,
+                        allowing doctors to interpret results alongside clinical judgment.
+                    </p>
+                </div>
+
+                <div class="ms-step">
+                    <span class="ms-step-number">6</span>
+                    <h3>Report Generation</h3>
+                    <p>
+                        A structured diagnostic report with predictions, confidence scores,
+                        and heatmaps can be downloaded as a PDF for medical records.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CONTACT / FOOTER ================= -->
+    <section id="contact" class="ms-section">
+        <div class="ms-container ms-contact-grid">
+            <!-- ===== LEFT SIDE INFO ===== -->
+            <div>
+                <div class="ms-section-header">
+                    <p class="ms-eyebrow">Contact</p>
+                    <h2>Let's Talk About Your Next Scan</h2>
+                    <p class="ms-section-sub">
+                        This project is built for academic and research purposes. 
+                        Use the form or contact us directly using the email below.
+                    </p>
+
+                    <!-- ===== CONTACT DETAILS ===== -->
+                    <div style="margin-top:1.5rem;">
+                        <p style="margin:.4rem 0;">
+                            <strong>Email:</strong>
+                            <a href="mailto:eternalvision2025@gmail.com"
+                               style="color:#00A86B;text-decoration:none;">
+                               sbcoder07@gmail.com / eternalvision2025@gmail.com
+                            </a>
+                        </p>
+
+                        <p style="margin:.4rem 0;">
+                            <strong>Project:</strong> MediScan AI
+                        </p>
+
+                        <p style="margin:.4rem 0;">
+                            <strong>Purpose:</strong> MCA Final Year Project
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== CONTACT FORM ===== -->
+            <form class="ms-contact-form"
+                  action="mailto:sbcoder07@gmail.com"
+                  method="POST"
+                  enctype="text/plain">
+
+                <label>
+                    Name
+                    <input type="text" name="Name" placeholder="Your name" required>
+                </label>
+
+                <label>
+                    Email
+                    <input type="email" name="Email" placeholder="your@email.com" required>
+                </label>
+
+                <label>
+                    Message
+                    <textarea name="Message" rows="4"
+                              placeholder="Share your thoughts or questions..."
+                              required></textarea>
+                </label>
+
+                <button type="submit" class="ms-btn ms-btn-primary">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="ms-footer">
+        <div class="ms-container ms-footer-inner">
+            <p>MediScan AI – Early Disease Detection • © 2025 Developed By SBCODERS</p>
+            <div class="ms-footer-links">
+                <a href="#hero">Home</a>
+                <a href="#services">Services</a>
+                <a href="#modules">Modules</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        function openAuthCard() {
+            document.getElementById("authOverlay").style.display = "flex";
+        }
+
+        function closeAuthCard() {
+            document.getElementById("authOverlay").style.display = "none";
+        }
+
+        function showLogin() {
+            document.getElementById("loginForm").style.display = "block";
+            document.getElementById("signupForm").style.display = "none";
+            document.getElementById("loginTab").className = "ms-btn ms-btn-small ms-btn-primary";
+            document.getElementById("signupTab").className = "ms-btn ms-btn-small ms-btn-outline";
+        }
+
+        function showSignup() {
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("signupForm").style.display = "block";
+            document.getElementById("loginTab").className = "ms-btn ms-btn-small ms-btn-outline";
+            document.getElementById("signupTab").className = "ms-btn ms-btn-small ms-btn-primary";
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+
+</body>
+</html>

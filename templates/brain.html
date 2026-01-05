@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediScan AI – Brain Tumor Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="margin:0; font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:radial-gradient(circle at top left,#021712 0,#02040a 40%,#000 100%); color:#f5f5f5;">
+
+    <!-- ================= NAVBAR ================= -->
+    <header
+        style="
+            position:sticky;
+            top:0;
+            z-index:50;
+            backdrop-filter:blur(16px);
+            background:linear-gradient(to bottom,rgba(2,4,10,0.95),transparent);
+            border-bottom:1px solid rgba(148,163,184,0.16);
+        ">
+        <div
+            style="
+                max-width:1120px;
+                margin:0 auto;
+                padding:0.75rem 1.5rem;
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+            ">
+            <!-- logo -->
+            <div style="display:flex;align-items:center;gap:0.55rem;font-weight:700;">
+                <span
+                    style="
+                        width:32px;
+                        height:32px;
+                        border-radius:12px;
+                        background:radial-gradient(circle at 0 0,#00ff84,#027a52);
+                        display:grid;
+                        place-items:center;
+                        color:#02040a;
+                        font-weight:900;
+                        box-shadow:0 0 30px rgba(0,255,132,0.7);
+                        font-size:1.05rem;
+                    ">
+                    M
+                </span>
+                <span>MediScan<span style="color:#00ff84;">AI</span></span>
+            </div>
+
+            <!-- links -->
+            <nav style="display:flex;gap:1.5rem;font-size:0.9rem;">
+                <a href="{{ url_for('index') }}#hero" style="color:#9ca3af;text-decoration:none;">Home</a>
+                <a href="{{ url_for('index') }}#services" style="color:#9ca3af;text-decoration:none;">Services</a>
+                <a href="{{ url_for('index') }}#modules" style="color:#9ca3af;text-decoration:none;">Modules</a>
+                <a href="{{ url_for('index') }}#workflow" style="color:#9ca3af;text-decoration:none;">How it works</a>
+            </nav>
+
+            <!-- CTA -->
+            <div>
+              <!--  <a href="#" 
+                   style="
+                        display:inline-flex;
+                        align-items:center;
+                        justify-content:center;
+                        padding:0.7rem 1.4rem;
+                        border-radius:999px;
+                        border:1px solid rgba(148,163,184,0.5);
+                        color:#f5f5f5;
+                        text-decoration:none;
+                        font-size:0.9rem;
+                        font-weight:600;
+                        background:transparent;
+                    ">
+                    Doctor Login
+                </a>-->
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= PAGE HERO ================= -->
+    <section style="padding:4.5rem 0 3.5rem;">
+        <div
+            style="
+                max-width:1120px;
+                margin:0 auto;
+                padding:0 1.5rem;
+                text-align:center;
+            ">
+            <p style="text-transform:uppercase;letter-spacing:0.18em;font-size:0.75rem;color:#00ff84;">
+                Brain Module
+            </p>
+            <h1
+                style="
+                    font-size:clamp(2.2rem,4vw,3rem);
+                    line-height:1.15;
+                    margin:0.6rem 0 0.4rem;
+                ">
+                Brain Tumor Detection – Patient Intake
+            </h1>
+            <p
+                style="
+                    margin:0.6rem auto 0;
+                    max-width:38rem;
+                    color:#9ca3af;
+                    line-height:1.6;
+                    font-size:0.95rem;
+                ">
+                Fill in the patient details and upload the CT / MRI brain scan.
+                MediScan AI will analyze the image and generate tumor probability, precise tumor segmentation, and a diagnostic report.
+            </p>
+        </div>
+    </section>
+
+    <!-- ================= FORM + PREVIEW SECTION ================= -->
+    <section style="padding:0 0 4.5rem;">
+        <div
+            style="
+                max-width:1120px;
+                margin:0 auto;
+                padding:0 1.5rem;
+            ">
+
+            <div
+                style="
+                    display:flex;
+                    flex-wrap:wrap;
+                    gap:2.5rem;
+                    align-items:flex-start;
+                ">
+
+                <!-- ---------- LEFT: FORM CARD ---------- -->
+                <form
+                    method="POST"
+                    action="/brain/predict"
+                    enctype="multipart/form-data"
+                    style="
+                        flex:1 1 320px;
+                        padding:1.8rem 1.7rem;
+                        border-radius:1.5rem;
+                        background:linear-gradient(135deg,#02050c,#020b12);
+                        border:1px solid rgba(148,163,184,0.26);
+                        box-shadow:0 16px 40px rgba(0,0,0,0.6);
+                    ">
+                    <p style="text-transform:uppercase;letter-spacing:0.18em;font-size:0.7rem;color:#00ff84;margin:0 0 0.2rem;">
+                        Patient Form
+                    </p>
+                    <h2 style="margin:0 0 1.2rem;font-size:1.3rem;">Patient Details</h2>
+
+                    <!-- row 1 -->
+                    <div
+                        style="
+                            display:grid;
+                            grid-template-columns:repeat(2,minmax(0,1fr));
+                            gap:1rem;
+                            margin-bottom:0.8rem;
+                        ">
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+                            <label for="patient_id">Patient ID (optional)</label>
+                            <input id="patient_id" name="patient_id" type="text" placeholder="e.g. BRN-2025-001"
+                                style="
+                                    background:#020812;
+                                    border-radius:0.7rem;
+                                    border:1px solid rgba(148,163,184,0.35);
+                                    padding:0.6rem 0.75rem;
+                                    color:#f5f5f5;
+                                    font-size:0.9rem;
+                                    outline:none;
+                                ">
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+                            <label for="patient_name">Full Name</label>
+                            <input id="patient_name" name="patient_name" type="text" required placeholder="Patient name"
+                                style="
+                                    background:#020812;
+                                    border-radius:0.7rem;
+                                    border:1px solid rgba(148,163,184,0.35);
+                                    padding:0.6rem 0.75rem;
+                                    color:#f5f5f5;
+                                    font-size:0.9rem;
+                                    outline:none;
+                                ">
+                        </div>
+                    </div>
+
+                    <!-- row 2 -->
+                    <div
+                        style="
+                            display:grid;
+                            grid-template-columns:repeat(2,minmax(0,1fr));
+                            gap:1rem;
+                            margin-bottom:0.8rem;
+                        ">
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+                            <label for="age">Age</label>
+                            <input id="age" name="age" type="number" min="0" max="120" required placeholder="e.g. 45"
+                                style="
+                                    background:#020812;
+                                    border-radius:0.7rem;
+                                    border:1px solid rgba(148,163,184,0.35);
+                                    padding:0.6rem 0.75rem;
+                                    color:#f5f5f5;
+                                    font-size:0.9rem;
+                                    outline:none;
+                                ">
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender" required
+                                style="
+                                    background:#020812;
+                                    border-radius:0.7rem;
+                                    border:1px solid rgba(148,163,184,0.35);
+                                    padding:0.6rem 0.75rem;
+                                    color:#f5f5f5;
+                                    font-size:0.9rem;
+                                    outline:none;
+                                ">
+                                <option value="" disabled selected>Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- row 3 -->
+                    <div
+                        style="
+                            display:grid;
+                            grid-template-columns:repeat(2,minmax(0,1fr));
+                            gap:1rem;
+                            margin-bottom:0.8rem;
+                        ">
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+                            <label for="contact">Contact Number</label>
+                            <input id="contact" name="contact" type="tel" placeholder="+91 XXXXX XXXXX"
+                                style="
+                                    background:#020812;
+                                    border-radius:0.7rem;
+                                    border:1px solid rgba(148,163,184,0.35);
+                                    padding:0.6rem 0.75rem;
+                                    color:#f5f5f5;
+                                    font-size:0.9rem;
+                                    outline:none;
+                                ">
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+                            <label for="doctor_name">Referring Doctor</label>
+                            <input id="doctor_name" name="doctor_name" type="text" placeholder="Doctor's name"
+                                style="
+                                    background:#020812;
+                                    border-radius:0.7rem;
+                                    border:1px solid rgba(148,163,184,0.35);
+                                    padding:0.6rem 0.75rem;
+                                    color:#f5f5f5;
+                                    font-size:0.9rem;
+                                    outline:none;
+                                ">
+                        </div>
+                    </div>
+
+                    <!-- row 4 -->
+                    <div
+                        style="
+                            display:grid;
+                            grid-template-columns:repeat(2,minmax(0,1fr));
+                            gap:1rem;
+                            margin-bottom:0.8rem;
+                        ">
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+                            <label for="scan_type">Scan Type</label>
+                            <select id="scan_type" name="scan_type" required
+                                style="
+                                    background:#020812;
+                                    border-radius:0.7rem;
+                                    border:1px solid rgba(148,163,184,0.35);
+                                    padding:0.6rem 0.75rem;
+                                    color:#f5f5f5;
+                                    font-size:0.9rem;
+                                    outline:none;
+                                ">
+                                <option value="" disabled selected>Select</option>
+                                <option value="CT">CT</option>
+                                <option value="MRI">MRI</option>
+                            </select>
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+                            <label for="scan_date">Scan Date</label>
+                            <input id="scan_date" name="scan_date" type="date"
+                                style="
+                                    background:#020812;
+                                    border-radius:0.7rem;
+                                    border:1px solid rgba(148,163,184,0.35);
+                                    padding:0.6rem 0.75rem;
+                                    color:#f5f5f5;
+                                    font-size:0.9rem;
+                                    outline:none;
+                                ">
+                        </div>
+                    </div>
+
+                    <!-- symptoms -->
+                    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;margin-bottom:0.9rem;">
+                        <label for="symptoms">Symptoms / Notes</label>
+                        <textarea id="symptoms" name="symptoms" rows="3"
+                            placeholder="Headache, seizures, prior surgery, etc."
+                            style="
+                                background:#020812;
+                                border-radius:0.7rem;
+                                border:1px solid rgba(148,163,184,0.35);
+                                padding:0.6rem 0.75rem;
+                                color:#f5f5f5;
+                                font-size:0.9rem;
+                                outline:none;
+                                resize:vertical;
+                            "></textarea>
+                    </div>
+
+                    <!-- file -->
+                    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;margin-bottom:0.9rem;">
+                        <label for="scan_file">Brain CT / MRI Image</label>
+                        <input id="scan_file" name="scan_file" type="file"
+                               accept=".png,.jpg,.jpeg,.bmp,.tif,.tiff" required
+                               style="
+                                   background:#020812;
+                                   border-radius:0.7rem;
+                                   border:1px solid rgba(148,163,184,0.35);
+                                   padding:0.45rem 0.75rem;
+                                   color:#f5f5f5;
+                                   font-size:0.85rem;
+                                   outline:none;
+                               ">
+                    </div>
+
+                    <!-- consent -->
+                    <div
+                        style="
+                            display:flex;
+                            align-items:flex-start;
+                            gap:0.6rem;
+                            margin-bottom:1.1rem;
+                            font-size:0.8rem;
+                            color:#9ca3af;
+                        ">
+                        <input type="checkbox" id="consent" name="consent" required
+                            style="
+                                width:auto;
+                                margin-top:0.15rem;
+                            ">
+                        <label for="consent" style="margin:0;">
+                            <p style="font-size:0.75rem;color:#9ca3af;margin-top:0.5rem;">Tumor regions are highlighted using a deep learning segmentation model (U-Net).</p>
+                        </label>
+                    </div>
+
+                    <!-- actions -->
+                    <div
+                        style="
+                            display:flex;
+                            flex-wrap:wrap;
+                            gap:0.8rem;
+                            margin-top:0.5rem;
+                        ">
+                        <button type="submit"
+                            style="
+                                display:inline-flex;
+                                align-items:center;
+                                justify-content:center;
+                                padding:0.8rem 1.5rem;
+                                border-radius:999px;
+                                border:none;
+                                cursor:pointer;
+                                font-size:0.9rem;
+                                font-weight:600;
+                                background:linear-gradient(135deg,#00ff84,#13e68a);
+                                color:#02110b;
+                                box-shadow:0 0 40px rgba(0,255,132,0.6);
+                            ">
+                            Run AI Analysis
+                        </button>
+
+                        <a href="{{ url_for('index') }}#modules"
+                            style="
+                                display:inline-flex;
+                                align-items:center;
+                                justify-content:center;
+                                padding:0.75rem 1.3rem;
+                                border-radius:999px;
+                                border:1px solid rgba(148,163,184,0.5);
+                                background:transparent;
+                                color:#f5f5f5;
+                                font-size:0.9rem;
+                                font-weight:600;
+                                text-decoration:none;
+                            ">
+                            ← Back to Modules
+                        </a>
+                    </div>
+                </form>
+
+                <!-- ---------- RIGHT: PREVIEW / INFO CARD ---------- -->
+                <aside
+                    style="
+                        flex:1 1 280px;
+                        padding:1.8rem 1.7rem;
+                        border-radius:1.5rem;
+                        background:radial-gradient(circle at top,#041a13 0,#02060d 55%,#000 100%);
+                        border:1px solid rgba(148,163,184,0.3);
+                        box-shadow:0 16px 40px rgba(0,0,0,0.6);
+                    ">
+                    <p style="text-transform:uppercase;letter-spacing:0.18em;font-size:0.7rem;color:#00ff84;margin:0 0 0.2rem;">
+                        Scan Preview
+                    </p>
+                    <h2 style="margin:0 0 0.5rem;font-size:1.2rem;">Uploaded Brain Scan</h2>
+                    <p style="margin:0.2rem 0 0.9rem;color:#9ca3af;font-size:0.9rem;line-height:1.5;">
+                        After selecting an image file, a quick preview will appear below.
+                        This is the same image that will be sent to the brain tumor model.
+                    </p>
+
+                    <div id="preview-box"
+                        style="
+                            margin-top:0.4rem;
+                            border-radius:1.1rem;
+                            border:1px dashed rgba(148,163,184,0.6);
+                            background:rgba(15,23,42,0.85);
+                            min-height:220px;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            overflow:hidden;
+                        ">
+                        <div id="preview-placeholder"
+                            style="text-align:center;color:#9ca3af;font-size:0.85rem;">
+                            No image selected yet.<br>
+                            Choose a CT / MRI brain image to preview.
+                        </div>
+                        <img id="preview-image" src="" alt="Brain scan preview"
+                            style="display:none;max-width:100%;max-height:100%;">
+                    </div>
+
+                    <ul style="margin:1.3rem 0 0;padding-left:1.1rem;font-size:0.8rem;color:#9ca3af;line-height:1.6;">
+                        <li>Supported formats: JPG, PNG, BMP, TIFF</li>
+                        <li>Ensure the brain region is clearly visible in the scan.</li>
+                        <li>The model output will show tumor probability and precise tumor segmentation.</li>
+                    </ul>
+                </aside>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer
+        style="
+            border-top:1px solid rgba(148,163,184,0.2);
+            padding:1.2rem 0 1.6rem;
+            background:#020309;
+        ">
+        <div
+            style="
+                max-width:1120px;
+                margin:0 auto;
+                padding:0 1.5rem;
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:1rem;
+                font-size:0.8rem;
+                color:#9ca3af;
+            ">
+            <p style="margin:0;">
+                MediScan AI – Brain Tumor Detection • © {{ 2025 }} Developed By SBCODERS
+            </p>
+            <div style="display:flex;gap:1rem;">
+                <a href="{{ url_for('index') }}#hero" style="color:#9ca3af;text-decoration:none;">Home</a>
+                <a href="{{ url_for('index') }}#services" style="color:#9ca3af;text-decoration:none;">Services</a>
+                <a href="{{ url_for('index') }}#modules" style="color:#9ca3af;text-decoration:none;">Modules</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= IMAGE PREVIEW SCRIPT ================= -->
+    <script>
+        const fileInput = document.getElementById('scan_file');
+        const previewImg = document.getElementById('preview-image');
+        const placeholder = document.getElementById('preview-placeholder');
+
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImg.src = e.target.result;
+                previewImg.style.display = 'block';
+                placeholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+
+</body>
+</html>

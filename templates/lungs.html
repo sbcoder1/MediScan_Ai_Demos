@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediScan AI – Lung Disease Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="margin:0; font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:radial-gradient(circle at top left,#021712 0,#02040a 40%,#000 100%); color:#f5f5f5;">
+
+<!-- ================= NAVBAR ================= -->
+<header style="position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);background:linear-gradient(to bottom,rgba(2,4,10,0.95),transparent);border-bottom:1px solid rgba(148,163,184,0.16);">
+    <div style="max-width:1120px;margin:0 auto;padding:0.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:0.55rem;font-weight:700;">
+            <span style="width:32px;height:32px;border-radius:12px;background:radial-gradient(circle at 0 0,#00ff84,#027a52);display:grid;place-items:center;color:#02040a;font-weight:900;box-shadow:0 0 30px rgba(0,255,132,0.7);font-size:1.05rem;">M</span>
+            <span>MediScan<span style="color:#00ff84;">AI</span></span>
+        </div>
+
+        <nav style="display:flex;gap:1.5rem;font-size:0.9rem;">
+            <a href="{{ url_for('index') }}#hero" style="color:#9ca3af;text-decoration:none;">Home</a>
+            <a href="{{ url_for('index') }}#services" style="color:#9ca3af;text-decoration:none;">Services</a>
+            <a href="{{ url_for('index') }}#modules" style="color:#9ca3af;text-decoration:none;">Modules</a>
+            <a href="{{ url_for('index') }}#workflow" style="color:#9ca3af;text-decoration:none;">How it works</a>
+        </nav>
+
+        <a href="#" style="padding:0.7rem 1.4rem;border-radius:999px;border:1px solid rgba(148,163,184,0.5);color:#f5f5f5;text-decoration:none;font-size:0.9rem;font-weight:600;">
+            Doctor Login
+        </a>
+    </div>
+</header>
+
+<!-- ================= PAGE HERO ================= -->
+<section style="padding:4.5rem 0 3.5rem;">
+    <div style="max-width:1120px;margin:0 auto;padding:0 1.5rem;text-align:center;">
+        <p style="text-transform:uppercase;letter-spacing:0.18em;font-size:0.75rem;color:#00ff84;">
+            Lung Module
+        </p>
+        <h1 style="font-size:clamp(2.2rem,4vw,3rem);line-height:1.15;margin:0.6rem 0 0.4rem;">
+            Lung Disease Detection – Patient Intake
+        </h1>
+        <p style="margin:0.6rem auto 0;max-width:38rem;color:#9ca3af;line-height:1.6;font-size:0.95rem;">
+            Fill in the patient details and upload the chest X-ray image.
+            MediScan AI will analyze lung regions and detect COVID-19,
+            Pneumonia, Lung Opacity, or Normal condition.
+        </p>
+    </div>
+</section>
+
+<!-- ================= FORM + PREVIEW ================= -->
+<section style="padding:0 0 4.5rem;">
+<div style="max-width:1120px;margin:0 auto;padding:0 1.5rem;">
+<div style="display:flex;flex-wrap:wrap;gap:2.5rem;align-items:flex-start;">
+
+<!-- ---------- LEFT: FORM CARD ---------- -->
+<form method="POST" action="/lung/predict" enctype="multipart/form-data"
+style="flex:1 1 320px;padding:1.8rem 1.7rem;border-radius:1.5rem;background:linear-gradient(135deg,#02050c,#020b12);border:1px solid rgba(148,163,184,0.26);box-shadow:0 16px 40px rgba(0,0,0,0.6);">
+
+<p style="text-transform:uppercase;letter-spacing:0.18em;font-size:0.7rem;color:#00ff84;margin:0 0 0.2rem;">
+Patient Form
+</p>
+<h2 style="margin:0 0 1.2rem;font-size:1.3rem;">Patient Details</h2>
+
+<!-- row 1 -->
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:0.8rem;">
+    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+        <label>Patient ID (optional)</label>
+        <input name="patient_id" placeholder="LUNG-2025-001"
+        style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+        <label>Full Name</label>
+        <input name="patient_name" required
+        style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;">
+    </div>
+</div>
+
+<!-- row 2 -->
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:0.8rem;">
+    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+        <label>Age</label>
+        <input type="number" name="age" min="0" max="120" required
+        style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+        <label>Gender</label>
+        <select name="gender" required
+        style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;">
+            <option disabled selected>Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+    </div>
+</div>
+
+<!-- row 3 -->
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:0.8rem;">
+    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+        <label>Contact Number</label>
+        <input name="contact" placeholder="+91 XXXXX XXXXX"
+        style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+        <label>Referring Doctor</label>
+        <input name="doctor_name"
+        style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;">
+    </div>
+</div>
+
+<!-- row 4 -->
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:0.8rem;">
+    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+        <label>Scan Type</label>
+        <select name="scan_type"
+        style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;">
+            <option>X-ray</option>
+        </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;">
+        <label>Scan Date</label>
+        <input type="date" name="scan_date"
+        style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;">
+    </div>
+</div>
+
+<!-- symptoms -->
+<div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;margin-bottom:0.9rem;">
+    <label>Symptoms / Notes</label>
+    <textarea name="symptoms" rows="3"
+    style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.6rem 0.75rem;color:#f5f5f5;font-size:0.9rem;"></textarea>
+</div>
+
+<!-- file -->
+<div style="display:flex;flex-direction:column;gap:0.35rem;font-size:0.85rem;color:#9ca3af;margin-bottom:0.9rem;">
+    <label>Chest X-ray Image</label>
+    <input type="file" id="scan_file" name="scan_file" accept=".jpg,.jpeg,.png" required
+    style="background:#020812;border-radius:0.7rem;border:1px solid rgba(148,163,184,0.35);padding:0.45rem 0.75rem;color:#f5f5f5;font-size:0.85rem;">
+</div>
+
+<div style="display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:1.1rem;font-size:0.8rem;color:#9ca3af;">
+    <input type="checkbox" required>
+    <p style="margin:0;">Lung regions are analyzed using a CNN-based deep learning classification model.</p>
+</div>
+
+<button type="submit"
+style="padding:0.8rem 1.5rem;border-radius:999px;border:none;font-weight:600;background:linear-gradient(135deg,#00ff84,#13e68a);color:#02110b;box-shadow:0 0 40px rgba(0,255,132,0.6);">
+Run AI Analysis
+</button>
+
+</form>
+
+<!-- ---------- RIGHT: PREVIEW CARD ---------- -->
+<!-- ---------- RIGHT: PREVIEW CARD ---------- -->
+<aside
+    style="
+        flex:1 1 280px;
+        padding:1.8rem 1.7rem;
+        border-radius:1.5rem;
+        background:radial-gradient(circle at top,#041a13 0,#02060d 55%,#000 100%);
+        border:1px solid rgba(148,163,184,0.3);
+        box-shadow:0 16px 40px rgba(0,0,0,0.6);
+    ">
+
+    <p style="text-transform:uppercase;letter-spacing:0.18em;font-size:0.7rem;color:#00ff84;margin:0 0 0.2rem;">
+        Scan Preview
+    </p>
+
+    <h2 style="margin:0 0 0.5rem;font-size:1.2rem;">
+        Uploaded Chest X-ray
+    </h2>
+
+    <p style="margin:0.2rem 0 0.9rem;color:#9ca3af;font-size:0.9rem;line-height:1.5;">
+        After selecting an image file, a quick preview will appear below.
+        This is the same image that will be sent to the lung disease detection model.
+    </p>
+
+    <div id="preview-box"
+        style="
+            margin-top:0.4rem;
+            border-radius:1.1rem;
+            border:1px dashed rgba(148,163,184,0.6);
+            background:rgba(15,23,42,0.85);
+            min-height:220px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+        ">
+        <div id="preview-placeholder"
+            style="text-align:center;color:#9ca3af;font-size:0.85rem;">
+            No image selected yet.<br>
+            Choose a chest X-ray image to preview.
+        </div>
+
+        <img id="preview-image"
+             src=""
+             alt="Chest X-ray preview"
+             style="display:none;max-width:100%;max-height:100%;">
+    </div>
+
+    <!-- ✅ ADDED (was missing) -->
+    <ul style="margin:1.3rem 0 0;padding-left:1.1rem;font-size:0.8rem;color:#9ca3af;line-height:1.6;">
+        <li>Supported formats: JPG, PNG</li>
+        <li>Ensure both lungs are clearly visible.</li>
+        <li>AI highlights disease-prone lung regions.</li>
+        <li>Prediction includes confidence score.</li>
+    </ul>
+
+</aside>
+
+</div>
+</div>
+</section>
+
+<script>
+const fileInput = document.getElementById('scan_file');
+const previewImg = document.getElementById('preview-image');
+const placeholder = document.getElementById('preview-placeholder');
+
+fileInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        previewImg.src = e.target.result;
+        previewImg.style.display = 'block';
+        placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+});
+</script>
+
+</body>
+</html>
